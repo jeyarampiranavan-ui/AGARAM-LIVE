@@ -1,25 +1,69 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8">
-  <title>AGARAM LIVE</title>
-  <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<meta charset="UTF-8">
+<title>AGARAM LIVE</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+  margin:0;
+  background:#000;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  height:100vh;
+}
+video{
+  width:100%;
+  max-width:1000px;
+  background:#000;
+}
+.live{
+  position:fixed;
+  top:15px;
+  left:15px;
+  background:red;
+  color:white;
+  padding:6px 12px;
+  font-weight:bold;
+  border-radius:6px;
+  font-family:Arial;
+}
+</style>
 </head>
-<body style="margin:0;background:black">
-  <video id="video" controls autoplay muted playsinline
-         style="width:100vw;height:100vh;background:black"></video>
 
-  <script>
-    var video = document.getElementById('video');
-    var videoSrc = 'https://reconditely-flintiest-refugio.ngrok-free.dev/stream.m3u8';
+<body>
 
-    if (Hls.isSupported()) {
-      var hls = new Hls({ lowLatencyMode: true });
-      hls.loadSource(videoSrc);
-      hls.attachMedia(video);
-    } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
-      video.src = videoSrc;
-    }
-  </script>
+<div class="live">🔴 LIVE</div>
+
+<video id="video" autoplay muted playsinline controls></video>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+
+<script>
+const video = document.getElementById('video');
+
+const streamURL =
+"https://reconditely-flintiest-refugio.ngrok-free.dev/stream.m3u8?t=" + Date.now();
+
+video.muted = true; // autoplay work ஆக இது முக்கியம்
+
+if (Hls.isSupported()) {
+    const hls = new Hls();
+    hls.loadSource(streamURL);
+    hls.attachMedia(video);
+    hls.on(Hls.Events.MANIFEST_PARSED, function () {
+        video.play().catch(()=>{});
+    });
+} 
+else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+    video.src = streamURL;
+    video.addEventListener('loadedmetadata', function () {
+        video.play().catch(()=>{});
+    });
+}
+</script>
+
 </body>
 </html>
